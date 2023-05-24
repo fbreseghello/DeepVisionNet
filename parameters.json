@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "brazilsouth"
+    },
+    "workspaceName": {
+      "value": "wkspc-1"
+    },
+    "computeInstanceName": {
+      "value": "cluster-ai-test"
+    },
+    "disableLocalAuth": {
+      "value": false
+    },
+    "maxNodeCount": {
+      "value": 2
+    },
+    "minNodeCount": {
+      "value": 0
+    },
+    "nodeIdleTimeBeforeScaleDown": {
+      "value": "PT120S"
+    },
+    "remoteLoginPortPublicAccess": {
+      "value": "Disabled"
+    },
+    "vmSize": {
+      "value": "Standard_DS11_v2"
+    },
+    "vmPriority": {
+      "value": "Dedicated"
+    }
+  }
+}
