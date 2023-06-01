@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 import tensorflow as tf
+import matplotlib
+matplotlib.use('Agg')
 
 def train_model():
     mnist = tf.keras.datasets.mnist
