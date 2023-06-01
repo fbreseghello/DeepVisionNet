@@ -1,14 +1,13 @@
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
-import tensorflow as tf
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg')  # Define o backend do Matplotlib como 'Agg'
+
+import matplotlib.pyplot as plt
+import tensorflow as tf
 
 def train_model():
     mnist = tf.keras.datasets.mnist
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    
+
     x_train = x_train / 255.0
     x_test = x_test / 255.0
     x_train = x_train[..., tf.newaxis]
@@ -23,46 +22,35 @@ def train_model():
     model.compile(optimizer='adam',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
-    display_text.set("Treinando o modelo...")
-    window.update()
 
- 
-    progress_bar['value'] = 0
-    progress_bar['maximum'] = 10
+    display_text = []
 
- 
     for epoch in range(10):
         model.fit(x_train, y_train, epochs=1, validation_data=(x_test, y_test))
-        progress_bar['value'] = epoch + 1
-        window.update()
-
-
         loss, accuracy = model.evaluate(x_test, y_test)
 
+        display_text.append(f"Epoch: {epoch + 1}\nLoss: {loss * 100:.2f}%\nAccuracy: {accuracy * 100:.2f}%")
 
-        display_text.set(f"Treinando o modelo...\nEpoch: {epoch + 1}\nLoss: {loss*100:.2f}%\nAccuracy: {accuracy*100:.2f}%")
-        window.update()
+    # Salva os resultados em um arquivo de texto
+    with open("resultado.txt", "w") as file:
+        for text in display_text:
+            file.write(text + "\n")
 
+    # Plota o gráfico de precisão
+    accuracy_values = [float(text.split("\nAccuracy: ")[1][:-1]) for text in display_text]
+    plt.plot(range(1, 11), accuracy_values)
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title('Training Accuracy')
+    plt.savefig('accuracy_plot.png')
 
-    loss, accuracy = model.evaluate(x_test, y_test)
-    messagebox.showinfo("Resultado", f"Loss: {loss}\nAccuracy: {accuracy}")
+    # Plota o gráfico de perda
+    loss_values = [float(text.split("\nLoss: ")[1][:-1]) for text in display_text]
+    plt.figure()
+    plt.plot(range(1, 11), loss_values)
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training Loss')
+    plt.savefig('loss_plot.png')
 
-
-    display_text.set("Treinamento concluído.")
-    window.update()
-
-window = tk.Tk()
-window.title("Treinamento do Modelo")
-window.geometry("300x250")
-
-display_text = tk.StringVar()
-display_label = tk.Label(window, textvariable=display_text)
-display_label.pack(pady=20)
-
-progress_bar = ttk.Progressbar(window, orient='horizontal', length=200, mode='determinate')
-progress_bar.pack(pady=10)
-
-train_button = tk.Button(window, text="Treinar Modelo", command=train_model)
-train_button.pack(pady=10)
-
-window.mainloop()
+train_model()
